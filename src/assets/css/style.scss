@@ -1,0 +1,226 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+
+$primary-font: "DM Sans", sans-serif;
+$primary-white: #fff;
+$primary-color: #43c3d1;
+$primary-black: #061123;
+$secondary-color: #0284ff;
+$tertiary-color: #2f4858;
+
+body {
+  font-family: $primary-font;
+  font-size: 1em;
+  color: $primary-black;
+  font-weight: 500;
+}
+
+h1 {
+  font-size: 2.5em;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.3em;
+}
+
+h4 {
+  font-size: 1em;
+}
+
+a {
+  text-decoration: none;
+  color: $primary-black;
+  &::hover {
+    color: $primary-color;
+  }
+}
+
+.primary-text {
+  color: $primary-color;
+}
+
+.secondary-text {
+  color: $secondary-color;
+}
+
+ul {
+  padding-left: 0;
+  li {
+    list-style: none;
+  }
+}
+.logo {
+  border: 0;
+}
+
+.container {
+  max-width: 1540px;
+}
+
+.btn {
+  &.btn-size {
+    background-color: rgba($primary-black, 0.03);
+    border-color: rgba($primary-black, 0.05);
+    padding: 7px 15px;
+    &.active {
+      border-color: rgba($primary-black, 0.2);
+    }
+    &:hover {
+      border-color: rgba($primary-black, 0.2);
+      color: $primary-black;
+    }
+  }
+  &.btn-primary {
+    background-color: $primary-color;
+    border-color: $primary-color;
+    padding: 7px 25px;
+    &:hover {
+      background-color: $primary-black;
+      border-color: $primary-black;
+      color: $primary-white;
+    }
+  }
+
+  &.btn-secondary {
+    background-color: $primary-black;
+    border-color: $primary-black;
+    color: $primary-white;
+    padding: 7px 25px;
+    &:hover {
+      background-color: $primary-color;
+      border-color: $primary-color;
+      color: $primary-white;
+    }
+  }
+}
+
+header {
+  .navbar-expand-lg {
+    .navbar-nav {
+      .nav-link {
+        padding: 10px 15px;
+        font-size: 1.2em;
+        font-weight: 500;
+        color: $primary-black;
+      }
+    }
+  }
+}
+
+.section-1 {
+  .swiper {
+    .swiper-wrapper {
+      .swiper-slide {
+        height: 750px;
+        .content {
+          height: 100%;
+          width: 100%;
+          background-repeat: no-repeat;
+          background-size: cover;
+        }
+      }
+    }
+  }
+}
+
+.product {
+  .card-img {
+    overflow: hidden;
+    border-radius: 20px;
+
+    img {
+      border-radius: 20px;
+
+      &:hover {
+        scale: 1.1;
+        transition: all 0.3s ease-out;
+      }
+    }
+  }
+  .card-body {
+    padding: 0;
+    .card-title {
+      font-size: 1.2em;
+      font-weight: 500;
+      color: $primary-black;
+      &:hover {
+        color: $primary-color;
+      }
+    }
+    .card-price {
+      font-size: 1.2em;
+      span {
+        color: #9e9e9e;
+      }
+    }
+  }
+}
+
+footer {
+  background-color: $tertiary-color;
+  .footer-content {
+    color: $primary-white;
+    font-size: 1.2em;
+    text-decoration: none;
+    &:hover {
+      color: $primary-color;
+    }
+  }
+  h2 {
+    font-size: 1.5em;
+    color: $primary-white;
+    font-weight: bold;
+  }
+
+  .spotlight {
+    border-top: solid 1px rgba($primary-white, 0.3);
+  }
+
+  .footer-icon {
+    margin-top: 1px;
+  }
+}
+
+.product-detail {
+  .mySwiper {
+    .swiper-slide {
+      height: auto !important;
+    }
+  }
+}
+
+.price {
+  span {
+    color: rgba($color: $primary-black, $alpha: 0.5);
+  }
+}
+
+.nav-tabs {
+  .nav-link {
+    color: $primary-black;
+    font-weight: 500;
+  }
+}
+
+@media (min-width: 200px) and (max-width: 768px) {
+  .section-1 {
+    .swiper {
+      .swiper-wrapper {
+        .swiper-slide {
+          height: 400px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .col-md-4 {
+    flex: 0 0 auto;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}

@@ -7,6 +7,8 @@ import {
   faUser,
   faShoppingCart
 } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+
 const Header = () => {
   return (
     <header className="shadow">
@@ -33,9 +35,9 @@ const Header = () => {
                 {/* <a href="" className="text-dark">
                   <FontAwesomeIcon icon={faHeart} size="lg" />
                 </a> */}
-                <a href="#" className="text-dark">
+                <Link to="/cart" className="text-dark">
                   <FontAwesomeIcon icon={faShoppingCart} size="lg" />
-                </a>
+                </Link>
                 {/* <a href="" className="text-dark">
                   <FontAwesomeIcon icon={faSearch} size="lg" />
                 </a> */}

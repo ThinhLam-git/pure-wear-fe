@@ -9,6 +9,8 @@ import Login from "./components/admin/Login";
 import { ToastContainer } from "react-toastify";
 import Dashboard from "./components/admin/Dashboard";
 import { AdminRequireAuth } from "./components/admin/AdminRequireAuth";
+import {default as ShowCategories} from "./components/admin/category/Show";
+import {default as CreateCategories} from "./components/admin/category/Create";
 
 function App() {
   return (
@@ -29,6 +31,23 @@ function App() {
               </AdminRequireAuth>
             }
           />
+          <Route
+            path="/admin/categories"
+            element={
+              <AdminRequireAuth>
+                <ShowCategories />
+              </AdminRequireAuth>
+            }
+          />
+          <Route
+            path="/admin/categories/create"
+            element={
+              <AdminRequireAuth>
+                <CreateCategories />
+              </AdminRequireAuth>
+            }
+          />
+
         </Routes>
       </BrowserRouter>
       <ToastContainer />

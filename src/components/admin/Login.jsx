@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { AdminAuthContext } from "../context/AdminAuth";
 
 const Login = () => {
-  const {login} = useContext(AdminAuthContext);
+  const login = useContext(AdminAuthContext);
 
   const {
     register,

@@ -1,10 +1,46 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Layout from "../../common/Layout";
 import Sidebar from "../../common/Sidebar";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { useForm } from "react-hook-form";
+import { adminToken, apiUrl } from "../../common/http";
+import { toast } from "react-toastify";
+import { useState } from "react";
 
 const Create = () => {
+  const [disable, setDisable] = useState(false);
+  const nav = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const saveCategory = async (data) => {
+    setDisable(true);
+    console.log(data);
+
+    const res = await fetch(apiUrl + "/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": `Bearer ${adminToken()}`,
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        setDisable(false);
+        if (result.status === 200) {
+          toast.success(result.message);
+          nav("/admin/categories");
+        } else {
+          toast.error("Failed to create category.");
+        }
+      });
+    };
+
   return (
     <Layout>
       <div className="container pb-5">
@@ -22,7 +58,7 @@ const Create = () => {
             <Sidebar />
           </div>
           <div className="col-md-9">
-            <form>
+            <form onSubmit={handleSubmit(saveCategory)}>
               <div className="card shadow">
                 <div className="card-body p-4">
                   <div className="mb-3">
@@ -30,32 +66,46 @@ const Create = () => {
                       Name
                     </label>
                     <input
+                      {...register("name", {
+                        required: "The name field is required.",
+                      })}
                       type="text"
-                      className="form-control"
+                      className={`form-control ${errors.name && "is-invalid"}`}
                       placeholder="Enter category name"
-                      required
-                    ></input>
+                    />
+                    {errors.name && (
+                      <p className="invalid-feedback">{errors.name?.message}</p>
+                    )}
                   </div>
                   <div className="mb-3">
                     <label htmlFor="" className="form-label">
                       Status
                     </label>
-                    <div className="position-relative">
-                      <select className="form-control pe-4">
-                        <option value="">Select Status</option>
-                        <option value="1">Active</option>
-                        <option value="0">Block</option>
-                      </select>
-                      <FontAwesomeIcon 
-                        icon={faAngleDown} 
-                        className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted"
-                        style={{pointerEvents: 'none'}}
-                      />
-                    </div>
+                    <select
+                      {...register("status", {
+                        required: "Please select a status.",
+                      })}
+                      className={`form-control pe-4 ${
+                        errors.status && "is-invalid"
+                      }`}
+                    >
+                      <option value="">Select Status</option>
+                      <option value="1">Active</option>
+                      <option value="0">Block</option>
+                    </select>
+                    {errors.status && (
+                      <p className="invalid-feedback">
+                        {errors.status?.message}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
-                  <button className="btn btn-primary mt-3">Create</button>
+              <button 
+              disabled={disable}
+              type="submit" className="btn btn-primary mt-3">
+                Create
+              </button>
             </form>
           </div>
         </div>

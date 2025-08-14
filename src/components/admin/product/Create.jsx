@@ -77,7 +77,6 @@ const Create = ({ placeholder }) => {
 
   const saveProduct = async (data) => {
     const formdata = { ...data, description: content, gallery: gallery };
-
     setDisable(true);
 
     try {
@@ -128,6 +127,7 @@ const Create = ({ placeholder }) => {
     })
       .then((res) => res.json())
       .then((result) => {
+        console.log(result);
         gallery.push(result.data.id);
         setGallery(gallery);
 
@@ -476,9 +476,9 @@ const Create = ({ placeholder }) => {
 
                   <div className="row">
                     {galleryImages &&
-                      galleryImages.map((image) => {
+                      galleryImages.map((image, index) => {
                         return (
-                          <div className="col-md-3 mb-3" key={image}>
+                          <div className="col-md-3 mb-3" key={`image-${index}`}>
                             <img
                               src={image}
                               alt="Gallery"

@@ -22,17 +22,17 @@ const Footer = () => {
               <h2 className="mb-3 pt-3">Categories</h2>
               <ul>
                 <li>
-                  <a href="#action1" class="footer-content">
+                  <a href="#action1" className="footer-content">
                     Men
                   </a>
                 </li>
                 <li>
-                  <a href="#action1" class="footer-content">
+                  <a href="#action1" className="footer-content">
                     Women
                   </a>
                 </li>
                 <li>
-                  <a href="#action1" class="footer-content">
+                  <a href="#action1" className="footer-content">
                     Kids
                   </a>
                 </li>
@@ -42,12 +42,12 @@ const Footer = () => {
               <h2 className="mb-3 pt-3">Quick Links</h2>
               <ul>
                 <li>
-                  <a href="#action1" class="footer-content">
+                  <a href="#action1" className="footer-content">
                     Login
                   </a>
                 </li>
                 <li>
-                  <a href="#action1" class="footer-content">
+                  <a href="#action1" className="footer-content">
                     Register
                   </a>
                 </li>

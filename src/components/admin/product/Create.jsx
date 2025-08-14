@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "../../common/Layout";
 import Sidebar from "../../common/Sidebar";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { adminToken, apiUrl } from "../../common/http";
 import { toast } from "react-toastify";
 import Loader from "../../common/Loader";
@@ -14,6 +14,8 @@ const Create = ({ placeholder }) => {
   const [disable, setDisable] = useState(false);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [gallery, setGallery] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]);
   const [loader, setLoader] = useState(false);
   const nav = useNavigate();
 
@@ -28,6 +30,8 @@ const Create = ({ placeholder }) => {
   const {
     register,
     handleSubmit,
+    setError,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -72,6 +76,8 @@ const Create = ({ placeholder }) => {
   };
 
   const saveProduct = async (data) => {
+    const formdata = { ...data, description: content, gallery: gallery };
+
     setDisable(true);
 
     try {
@@ -82,7 +88,7 @@ const Create = ({ placeholder }) => {
           Accept: "application/json",
           Authorization: `Bearer ${adminToken()}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(formdata),
       });
 
       const result = await res.json();
@@ -92,7 +98,11 @@ const Create = ({ placeholder }) => {
         toast.success(result.message);
         nav("/admin/products");
       } else {
-        toast.error(result.message || "Failed to create product.");
+        const formErrors = result.errors || {};
+        // toast.error(result.message || "Failed to create product.");
+        Object.keys(formErrors).forEach((field) => {
+          setError(field, { message: formErrors[field][0] });
+        });
       }
     } catch (error) {
       setDisable(false);
@@ -100,6 +110,35 @@ const Create = ({ placeholder }) => {
       toast.error("Failed to create product.");
     }
   };
+
+  // ...existing code...
+  const handleFile = async (e) => {
+    const formData = new FormData();
+    const files = e.target.files[0];
+    formData.append("image", files);
+    setDisable(true);
+
+    const res = await fetch(apiUrl + "/temp-images", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${adminToken()}`,
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        gallery.push(result.data.id);
+        setGallery(gallery);
+
+        galleryImages.push(result.data.image_url);
+        setGalleryImages(galleryImages);
+        setDisable(false);
+
+        e.target.value = "";
+      });
+  };
+  // ...existing code...
 
   useEffect(() => {
     fetchCategories();
@@ -165,29 +204,29 @@ const Create = ({ placeholder }) => {
                         <label htmlFor="" className="form-label">
                           Category
                         </label>
-                          <select
-                            {...register("category_id", {
-                              required: "Please select a category.",
-                            })}
-                            className={`form-control pe-4 ${
-                              errors.category_id && "is-invalid"
-                            }`}
-                            disabled={loader}
-                          >
-                            <option value="">Select Category</option>
-                            {categories &&
-                              categories.map((category) => (
-                                <option
-                                  key={`category-${category.id}`}
-                                  value={category.id}
-                                >
-                                  {category.name}
-                                </option>
-                              ))}
-                          </select>
-                        {errors.category_id && (
+                        <select
+                          {...register("category", {
+                            required: "Please select a category.",
+                          })}
+                          className={`form-control pe-4 ${
+                            errors.category && "is-invalid"
+                          }`}
+                          disabled={loader}
+                        >
+                          <option value="">Select Category</option>
+                          {categories &&
+                            categories.map((category) => (
+                              <option
+                                key={`category-${category.id}`}
+                                value={category.id}
+                              >
+                                {category.name}
+                              </option>
+                            ))}
+                        </select>
+                        {errors.category && (
                           <p className="invalid-feedback">
-                            {errors.category_id?.message}
+                            {errors.category?.message}
                           </p>
                         )}
                       </div>
@@ -199,6 +238,7 @@ const Create = ({ placeholder }) => {
                         </label>
                         <div className="position-relative">
                           <select
+                            {...register("brand")}
                             className={`form-control pe-4 `}
                             disabled={loader}
                           >
@@ -279,7 +319,7 @@ const Create = ({ placeholder }) => {
                           Discounted Price
                         </label>
                         <input
-                          {...register("discounted_price", {
+                          {...register("compare_price", {
                             pattern: {
                               value: /^\d+(\.\d+)?$/,
                               message: "Please enter a valid price",
@@ -428,19 +468,37 @@ const Create = ({ placeholder }) => {
                       Image
                     </label>
                     <input
+                      onChange={handleFile}
                       type="file"
                       className="form-control"
-                      accept="image/*"
-                      multiple
-                      {...register("images", {
-                        required: "Please upload product images.",
-                      })}
                     />
-                    {errors.images && (
-                      <p className="invalid-feedback">
-                        {errors.images?.message}
-                      </p>
-                    )}
+                  </div>
+
+                  <div className="row">
+                    {galleryImages &&
+                      galleryImages.map((image) => {
+                        return (
+                          <div className="col-md-3 mb-3" key={image}>
+                            <img
+                              src={image}
+                              alt="Gallery"
+                              className="img-fluid rounded w-100"
+                            />
+                            <button
+                              type="button"
+                              className="btn btn-danger mt-2 text-center justify-content-center align-items-center"
+                              onClick={() => {
+                                setGallery(
+                                  gallery.filter((id) => id !== image)
+                                );
+                                setGalleryImages(
+                                  galleryImages.filter((img) => img !== image)
+                                );
+                              }}
+                            >Delete</button>
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
               </div>

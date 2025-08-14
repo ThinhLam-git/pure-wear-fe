@@ -102,8 +102,8 @@ const Show = () => {
                           return (
                             <tr key={product.id}>
                               <td>{product.id}</td>
-                              <td><img style={{width:"70px"}} src={product.image_url || ""} alt="Product Image" /></td>
-                              <td>${product.title}</td>
+                              <td><img style={{width:"50px"}} src={product.image_url || "https://placehold.co/50x50"} alt="Product Image" /></td>
+                              <td>{product.title}</td>
                               <td>{product.price}</td>
                               <td>{product.qty}</td>
                               <td>{product.sku}</td>

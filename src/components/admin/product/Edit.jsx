@@ -14,8 +14,8 @@ const Edit = ({ placeholder }) => {
   const [disable, setDisable] = useState(false);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  // const [gallery, setGallery] = useState([]);
-  // const [galleryImages, setGalleryImages] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [sizesSelected, setSizesSelected] = useState([]);
   const [productImages, setProductImages] = useState([]);
   const [product, setProduct] = useState({});
   const [loader, setLoader] = useState(false);
@@ -53,10 +53,13 @@ const Edit = ({ placeholder }) => {
           setLoader(false);
           if (result.status === 200) {
             setProduct(result.data);
+            setSizesSelected(result.productSizes);
+            setContent(result.data.description);
+            setProductImages(result.data.product_images);
             reset({
               title: result.data.title,
-              category: result.data.category_id,
-              brand: result.data.brand_id,
+              category: result.data.category,
+              brand: result.data.brand,
               short_description: result.data.short_description,
               price: result.data.price,
               compare_price: result.data.compare_price,
@@ -66,10 +69,6 @@ const Edit = ({ placeholder }) => {
               status: result.data.status.toString(),
               is_featured: result.data.is_featured.toString(),
             });
-            setContent(result.data.description);
-            setProductImages(result.data.product_images);
-            // setGallery(result.data.gallery || []);
-            // setGalleryImages(result.data.gallery_images || []);
           } else {
             toast.error("Failed to fetch product details.");
           }
@@ -117,13 +116,37 @@ const Edit = ({ placeholder }) => {
     }
   };
 
+  const fetchSizes = async () => {
+    const res = await fetch(apiUrl + "/sizes", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${adminToken()}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === 200) {
+          setSizes(result.data);
+        } else {
+          console.log("Failed to fetch sizes.");
+        }
+      });
+  };
+
   const saveProduct = async (data) => {
-    const formdata = { ...data, description: content, gallery: gallery };
+    // Include existing image data to prevent it from being set to null
+    const formdata = {
+      ...data,
+      description: content,
+      image: productImages, // Include the existing image
+    };
 
     setDisable(true);
 
     try {
-      const res = await fetch(apiUrl + "/products", {
+      const res = await fetch(apiUrl + `/products/${params.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -153,7 +176,6 @@ const Edit = ({ placeholder }) => {
     }
   };
 
-  // ...existing code...
   const handleFile = async (e) => {
     const formData = new FormData();
     const files = e.target.files[0];
@@ -171,11 +193,6 @@ const Edit = ({ placeholder }) => {
     })
       .then((res) => res.json())
       .then((result) => {
-        // gallery.push(result.data.id);
-        // setGallery(gallery);
-
-        // galleryImages.push(result.data.image_url);
-        // setGalleryImages(galleryImages);
         setDisable(false);
 
         if (result.status === 200) {
@@ -188,9 +205,55 @@ const Edit = ({ placeholder }) => {
       });
   };
 
+  const changeDefaultImage = async (image) => {
+    const res = await fetch(
+      apiUrl +
+        `/change-product-default-image?product_id=${params.id}&image=${image}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${adminToken()}`,
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === 200) {
+          toast.success(result.message);
+        } else {
+          toast.error("Failed to change default image.");
+        }
+      });
+  };
+
+  const deleteProductImage = async (id) => {
+    if (confirm("Are you sure you want to delete this image?")) {
+      setDisable(true);
+      const res = await fetch(apiUrl + `/delete-product-image/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${adminToken()}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          setDisable(false);
+
+          if (result.status === 200) {
+            setProductImages(productImages.filter((img) => img.id !== id));
+            toast.success(result.message);
+          } else {
+            toast.error("Failed to delete product image.");
+          }
+        });
+    }
+  };
   useEffect(() => {
     fetchCategories();
     fetchBrands();
+    fetchSizes();
   }, []);
 
   return (
@@ -509,6 +572,41 @@ const Edit = ({ placeholder }) => {
                     </div>
                   </div>
 
+                  <div className="mb-3">
+                    <label className="form-label">Size</label>
+                    {sizes &&
+                      sizes.map((size) => (
+                        <div
+                          className="form-check-inline ps-3"
+                          key={`psize-${size.id}`}
+                        >
+                          <input
+                            {...register("sizes")}
+                            className="form-check-input"
+                            checked={sizesSelected.includes(size.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSizesSelected([...sizesSelected, size.id]);
+                              } else {
+                                setSizesSelected(
+                                  sizesSelected.filter((id) => id !== size.id)
+                                );
+                              }
+                            }}
+                            type="checkbox"
+                            value={size.id}
+                            id={`size-${size.id}`}
+                          />
+                          <label
+                            className="form-check-label ps-2"
+                            htmlFor={`size-${size.id}`}
+                          >
+                            {size.name}
+                          </label>
+                        </div>
+                      ))}
+                  </div>
+
                   <h3 className="py-3 border-bottom mb-3 ">Gallery</h3>
 
                   <div className="mb-3">
@@ -539,21 +637,19 @@ const Edit = ({ placeholder }) => {
                               type="button"
                               className="btn btn-danger mt-2 text-center justify-content-center align-items-center"
                               onClick={() => {
-                                // setGallery(
-                                //   gallery.filter((id) => id !== image)
-                                // );
-                                // setGalleryImages(
-                                //   galleryImages.filter((img) => img !== image)
-                                // );
-                                setProductImages(
-                                  productImages.filter(
-                                    (img) => img.id !== productImage.id
-                                  )
-                                  //Thiếu hàm deleteProductImage trong table ProductImage
-                                );
+                                deleteProductImage(productImage.id);
                               }}
                             >
                               Delete
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-secondary mt-2 ms-2"
+                              onClick={() => {
+                                changeDefaultImage(productImage.image);
+                              }}
+                            >
+                              Set as Default
                             </button>
                           </div>
                         );

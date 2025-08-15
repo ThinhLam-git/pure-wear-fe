@@ -14,6 +14,8 @@ const Create = ({ placeholder }) => {
   const [disable, setDisable] = useState(false);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [sizesSelected, setSizesSelected] = useState([]);
   const [gallery, setGallery] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]);
   const [loader, setLoader] = useState(false);
@@ -73,6 +75,25 @@ const Create = ({ placeholder }) => {
     } catch (error) {
       console.error("Error fetching brands:", error);
     }
+  };
+
+  const fetchSizes = async () => {
+    const res = await fetch(apiUrl + "/sizes", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${adminToken()}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === 200) {
+          setSizes(result.data);
+        } else {
+          console.log("Failed to fetch sizes.");
+        }
+      });
   };
 
   const saveProduct = async (data) => {
@@ -143,6 +164,7 @@ const Create = ({ placeholder }) => {
   useEffect(() => {
     fetchCategories();
     fetchBrands();
+    fetchSizes()
   }, []);
 
   return (
@@ -461,6 +483,41 @@ const Create = ({ placeholder }) => {
                     </div>
                   </div>
 
+                  <div className="mb-3">
+                    <label className="form-label">Size</label>
+                    {sizes &&
+                      sizes.map((size) => (
+                        <div
+                          className="form-check-inline ps-3"
+                          key={`psize-${size.id}`}
+                        >
+                          <input
+                            {...register("sizes")}
+                            className="form-check-input"
+                            checked={sizesSelected.includes(size.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSizesSelected([...sizesSelected, size.id]);
+                              } else {
+                                setSizesSelected(
+                                  sizesSelected.filter((id) => id !== size.id)
+                                );
+                              }
+                            }}
+                            type="checkbox"
+                            value={size.id}
+                            id={`size-${size.id}`}
+                          />
+                          <label
+                            className="form-check-label ps-2"
+                            htmlFor={`size-${size.id}`}
+                          >
+                            {size.name}
+                          </label>
+                        </div>
+                      ))}
+                  </div>
+
                   <h3 className="py-3 border-bottom mb-3 ">Gallery</h3>
 
                   <div className="mb-3">
@@ -495,7 +552,9 @@ const Create = ({ placeholder }) => {
                                   galleryImages.filter((img) => img !== image)
                                 );
                               }}
-                            >Delete</button>
+                            >
+                              Delete
+                            </button>
                           </div>
                         );
                       })}

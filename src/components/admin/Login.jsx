@@ -7,19 +7,17 @@ import { useNavigate } from "react-router-dom";
 import { AdminAuthContext } from "../context/AdminAuth";
 
 const Login = () => {
-  const login = useContext(AdminAuthContext);
+  const { login } = useContext(AdminAuthContext);
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm();
 
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    console.log(data);
 
     const res = await fetch(apiUrl + "/admin/login", {
       method: "POST",

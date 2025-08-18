@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MenImg from "../../assets/images/Mens/Mens/eleven.jpg";
 import { adminToken, apiUrl } from "./http";
+import { Link } from "react-router-dom";
 
 const LatestProducts = () => {
   const [products, setProducts] = useState([]);
@@ -33,19 +34,17 @@ const LatestProducts = () => {
           {products &&
             products.map((product, index) => {
               return (
-                <div className="col-md-3 col-6" key={index}>
+                <div className="col-md-3 col-6" key={`product-${index}`}>
                   <div className="product card border-0">
                     <div className="card-img">
-                      <img
-                        src={product.image_url}
-                        alt={product.title}
-                        className="w-100"
-                      />
+                      <Link to={`/product/${product.id}`}>
+                        <img src={product.image_url} alt={product.title} className="w-100" />
+                      </Link>
                     </div>
                     <div className="card-body py-3">
-                      <a href="" className="card-title">
+                      <Link to={`/product/${product.id}`} className="card-title">
                         {product.title}
-                      </a>
+                      </Link>
                       <p className="card-price">
                         ${product.compare_price}{" "}
                         <span className="text-decoration-line-through">

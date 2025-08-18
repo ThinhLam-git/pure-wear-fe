@@ -18,15 +18,17 @@ import {default as EditBrands} from "./components/admin/brand/Edit";
 import {default as ShowProducts} from "./components/admin/product/Show";
 import {default as CreateProducts} from "./components/admin/product/Create";
 import {default as EditProducts} from "./components/admin/product/Edit";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 function App() {
   return (
     <>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
-          <Route path="/product" element={<Product />} />
+          <Route path="/product/:id" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/admin/login" element={<Login />} />

@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Layout from "./common/Layout";
 import ProductImg from "../assets/images/Mens/Mens/six.jpg";
+import { CartContext } from "./context/Cart";
 
 const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("creditCard");
+  const { cartData } = useContext(CartContext);
+
   const handlePaymentMethod = (e) => {
     setPaymentMethod(e.target.id);
-  }
+  };
   return (
     <Layout>
       <div className="container pb-5">
@@ -110,51 +113,26 @@ const Checkout = () => {
             </h3>
             <table className="pt-3 table">
               <tbody>
-                <tr>
-                  <td width={100}>
-                    <img src={ProductImg} alt="Product" width={80} />
-                  </td>
-                  <td>
-                    <h4>Dummy Product Title</h4>
-                    <div className="d-flex align-items-center pt-3">
-                      <span className="">$10</span>
-                      <div className="ps-3">
-                        <button className="btn btn-size">M</button>
-                      </div>
-                      <div className="ps-5">x1</div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td width={100}>
-                    <img src={ProductImg} alt="Product" width={80} />
-                  </td>
-                  <td>
-                    <h4>Dummy Product Title</h4>
-                    <div className="d-flex align-items-center pt-3">
-                      <span className="">$10</span>
-                      <div className="ps-3">
-                        <button className="btn btn-size">M</button>
-                      </div>
-                      <div className="ps-5">x1</div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td width={100}>
-                    <img src={ProductImg} alt="Product" width={80} />
-                  </td>
-                  <td>
-                    <h4>Dummy Product Title</h4>
-                    <div className="d-flex align-items-center pt-3">
-                      <span className="">$10</span>
-                      <div className="ps-3">
-                        <button className="btn btn-size">M</button>
-                      </div>
-                      <div className="ps-5">x1</div>
-                    </div>
-                  </td>
-                </tr>
+                {cartData &&
+                  cartData.map((item, index) => (
+                    <tr key={`item-${index}`}>
+                      <td width={100}>
+                        <img src={item.image_url} alt="Product" width={80} />
+                      </td>
+                      <td>
+                        <h4>{item.title}</h4>
+                        <div className="d-flex align-items-center pt-3">
+                          <span className="">${item.price}</span>
+                          <div className="ps-3">
+                            <button className="btn btn-size">
+                              {item.size ? item.size : "Select Size"}
+                            </button>
+                          </div>
+                          <div className="ps-5">x{item.qty}</div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
 

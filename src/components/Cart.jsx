@@ -1,12 +1,33 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Layout from "./common/Layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { CartContext } from "./context/Cart";
 
 const Cart = () => {
-  const { cartData, shipping, subTotal, grandTotal } = useContext(CartContext);
+  const {
+    cartData,
+    shipping,
+    subTotal,
+    grandTotal,
+    updateCartItemQty,
+    deleteCartItem,
+  } = useContext(CartContext);
+  const [qty, setQty] = useState({});
+  const navigate = useNavigate();
+  const handleQtyChange = (e, id) => {
+    const newQty = e.target.value;
+    setQty((prev) => ({
+      ...prev,
+      [id]: newQty,
+    }));
+    updateCartItemQty(id, newQty);
+  };
+
+  const handleDeleteCartItem = (id) => {
+    deleteCartItem(id);
+  };
 
   return (
     <Layout>
@@ -33,7 +54,13 @@ const Cart = () => {
 
             <table className="table">
               <tbody>
-                {cartData &&
+                {cartData.length == 0 ? (
+                  <tr>
+                    <td colSpan={5} height={200} valign="middle" align="center">
+                      <h4>Your cart is empty</h4>
+                    </td>
+                  </tr>
+                ) : (
                   cartData.map((item, index) => {
                     return (
                       <tr key={`cart-item-${index}`}>
@@ -56,15 +83,24 @@ const Cart = () => {
                             style={{ width: "100px" }}
                             type="number"
                             className="form-control"
-                            defaultValue={item.qty}
+                            value={qty[item.id] || item.qty}
+                            min={1}
+                            max={10}
+                            onChange={(e) => handleQtyChange(e, item.id)}
                           />
                         </td>
                         <td valign="middle">
-                          <FontAwesomeIcon icon={faTrashCan} size="lg" />
+                          <FontAwesomeIcon
+                            style={{ cursor: "pointer" }}
+                            icon={faTrashCan}
+                            size="lg"
+                            onClick={() => handleDeleteCartItem(item.id)}
+                          />
                         </td>
                       </tr>
                     );
-                  })}
+                  })
+                )}
               </tbody>
             </table>
           </div>
@@ -90,7 +126,10 @@ const Cart = () => {
             </div>
 
             <div className="d-flex justify-content-between pt-3 ">
-              <button className="btn btn-primary w-100">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="btn btn-primary w-100"
+              >
                 Proceed to Checkout
               </button>
             </div>

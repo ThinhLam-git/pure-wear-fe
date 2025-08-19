@@ -1,4 +1,4 @@
-import { React, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Layout from "./common/Layout";
 import { Link, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -7,13 +7,10 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
-import ProductImg from "../assets/images/Mens/Mens/six.jpg";
-import ProductImg2 from "../assets/images/Mens/Mens/three.jpg";
-import ProductImg3 from "../assets/images/Mens/Mens/four.jpg";
 import { Rating } from "react-simple-star-rating";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
-import { adminToken, apiUrl } from "./common/http";
+import { apiUrl, userToken } from "./common/http";
 import { CartContext } from "./context/Cart";
 import { toast } from "react-toastify";
 
@@ -23,8 +20,9 @@ const Product = () => {
   const [product, setProduct] = useState([]);
   const [productImages, setProductImages] = useState([]);
   const [productSizes, setProductSizes] = useState([]);
-  const [selectedSize, setSelectedSize] = useState(null);
   const [allSizes, setAllSizes] = useState([]);
+  const [sizesLoaded, setSizesLoaded] = useState(false);
+  const [selectedSize, setSelectedSize] = useState(null);
   const params = useParams();
   const { addToCart } = useContext(CartContext);
 
@@ -48,7 +46,7 @@ const Product = () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken()}`,
       },
     })
       .then((res) => res.json())
@@ -64,18 +62,19 @@ const Product = () => {
   };
 
   const fetchSizes = async () => {
-    const res = await fetch(apiUrl + "/sizes", {
+    const res = await fetch(apiUrl + "/get-sizes", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken()}`,
       },
     })
       .then((res) => res.json())
       .then((result) => {
         if (result.status === 200) {
           setAllSizes(result.data);
+          setSizesLoaded(true);
         } else {
           console.log("Failed to fetch sizes.");
         }
@@ -83,8 +82,11 @@ const Product = () => {
   };
 
   const getSizeName = (sizeId) => {
-    const size = allSizes.find((s) => s.id === sizeId);
-    return size ? size.name : sizeId;
+    if (!sizesLoaded || !allSizes.length) {
+      return `Size ${sizeId}`; // Fallback while loading
+    }
+    const size = allSizes.find(s => s.id === sizeId);
+    return size ? size.name : `Size ${sizeId}`;
   };
 
   // Check if we have images to display
@@ -239,28 +241,45 @@ const Product = () => {
 
             <div className="sizes pt-3">
               <h5 className="pt-2">Select Size</h5>
-              {productSizes.map((size, index) => {
-                return (
-                  <button
-                    onClick={() => setSelectedSize(getSizeName(size.size_id))}
-                    style={{
-                      backgroundColor:
-                        selectedSize === getSizeName(size.size_id)
-                          ? "#000"
-                          : "#fff",
-                      color:
-                        selectedSize === getSizeName(size.size_id) ||
-                        selectedSize == null
-                          ? "#fff"
-                          : "#000",
-                    }}
-                    className="btn btn-size ms-2 "
-                    key={`size-${index}`}
-                  >
-                    {getSizeName(size.size_id)}
-                  </button>
-                );
-              })}
+              {!sizesLoaded ? (
+                <div className="d-flex">
+                  {productSizes.map((size, index) => (
+                    <button
+                      key={`size-loading-${index}`}
+                      className="btn btn-size ms-2"
+                      disabled
+                      style={{ opacity: 0.6 }}
+                    >
+                      Loading...
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="d-flex">
+                  {productSizes.map((size, index) => {
+                    const sizeName = getSizeName(size.size_id);
+                    return (
+                      <button
+                        onClick={() => setSelectedSize(sizeName)}
+                        style={{
+                          backgroundColor:
+                            selectedSize === sizeName
+                              ? "#000"
+                              : "#fff",
+                          color:
+                            selectedSize === sizeName
+                              ? "#fff"
+                              : "#000",
+                        }}
+                        className="btn btn-size ms-2"
+                        key={`size-${index}`}
+                      >
+                        {sizeName}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <div className="add-to-cart mt-3">

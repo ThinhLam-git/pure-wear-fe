@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MenImg from "../../assets/images/Mens/Mens/eleven.jpg";
-import { adminToken, apiUrl } from "./http";
+import { apiUrl, userToken } from "./http";
 import { Link } from "react-router-dom";
 
 const LatestProducts = () => {
@@ -11,7 +11,8 @@ const LatestProducts = () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken()}`,
+
       },
     })
       .then((res) => res.json())

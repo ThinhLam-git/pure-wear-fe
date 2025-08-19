@@ -7,3 +7,11 @@ export const adminToken = () => {
         return adminInfo.token;
     }
 }
+
+export const userToken = () => {
+    const data = localStorage.getItem("userInfo");
+    if (data) {
+        const userInfo = JSON.parse(data);
+        return userInfo.token;
+    }
+}

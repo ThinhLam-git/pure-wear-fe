@@ -205,22 +205,22 @@ footer {
   }
 }
 
-.login{
+.login {
   width: 450px;
 }
 
-.sidebar{
-  ul{
-    li{
+.sidebar {
+  ul {
+    li {
       border-bottom: 1px solid rgba($primary-black, 0.1);
       margin-bottom: 2px;
-      a{
+      a {
         display: block;
         padding: 10px;
         color: $primary-black;
-        &:hover{
+        &:hover {
           color: $primary-color;
-        } 
+        }
       }
     }
   }
@@ -253,24 +253,24 @@ footer {
       height: auto !important;
       opacity: 0.4;
       transition: opacity 0.3s ease;
-      
+
       &.swiper-slide-thumb-active {
         opacity: 1;
       }
     }
   }
-  
+
   .mySwiper2 {
     .swiper-slide {
       height: 100%;
-      
+
       img {
         max-height: 100%;
         width: auto;
         max-width: 100%;
       }
     }
-    
+
     .swiper-button-next,
     .swiper-button-prev {
       color: #000;
@@ -278,9 +278,44 @@ footer {
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      
+
       &::after {
         font-size: 18px;
+      }
+    }
+  }
+}
+
+.cart-bucket {
+  position: relative;
+  &:hover {
+    span {
+      background-color: $primary-color;
+    }
+  }
+  span {
+    position: absolute;
+    background-color: #f97316;
+    color: #fff;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    top: -8px;
+    right: -12px;
+    font-size: 14px;
+    text-align: center;
+  }
+}
+
+.category-container {
+  .navbar-nav {
+    .nav-link {
+      color: $primary-black;
+      font-weight: 500;
+      font-size: 1.2em;
+      &:hover {
+        color: $primary-color !important;
       }
     }
   }

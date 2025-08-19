@@ -227,7 +227,7 @@ const Shop = () => {
                               ${product.price}
                             </span>
                           </p>
-                          <button className="btn btn-primary">
+                          <button onClick={() => handleAddToCart(product)} className="btn btn-primary">
                             Add to Cart
                           </button>
                         </div>

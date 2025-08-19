@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import Layout from "./common/Layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { CartContext } from "./context/Cart";
@@ -15,7 +15,7 @@ const Cart = () => {
     deleteCartItem,
   } = useContext(CartContext);
   const [qty, setQty] = useState({});
-
+  const navigate = useNavigate();
   const handleQtyChange = (e, id) => {
     const newQty = e.target.value;
     setQty((prev) => ({
@@ -126,7 +126,10 @@ const Cart = () => {
             </div>
 
             <div className="d-flex justify-content-between pt-3 ">
-              <button className="btn btn-primary w-100">
+              <button
+                onClick={() => navigate("/checkout")}
+                className="btn btn-primary w-100"
+              >
                 Proceed to Checkout
               </button>
             </div>

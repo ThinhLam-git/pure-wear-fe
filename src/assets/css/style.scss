@@ -320,3 +320,16 @@ footer {
     }
   }
 }
+
+.nav-right{
+  .link{
+    .font-awesome-icon{
+      color: $primary-black;
+      &:hover {
+        color: $primary-color !important;
+      }
+    }
+  }
+}
+
+

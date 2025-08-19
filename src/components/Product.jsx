@@ -10,7 +10,7 @@ import "swiper/css/thumbs";
 import { Rating } from "react-simple-star-rating";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
-import { adminToken, apiUrl } from "./common/http";
+import { apiUrl, userToken } from "./common/http";
 import { CartContext } from "./context/Cart";
 import { toast } from "react-toastify";
 
@@ -46,7 +46,7 @@ const Product = () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken()}`,
       },
     })
       .then((res) => res.json())
@@ -62,12 +62,12 @@ const Product = () => {
   };
 
   const fetchSizes = async () => {
-    const res = await fetch(apiUrl + "/sizes", {
+    const res = await fetch(apiUrl + "/get-sizes", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken()}`,
       },
     })
       .then((res) => res.json())

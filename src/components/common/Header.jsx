@@ -5,7 +5,7 @@ import Logo from "../../assets/images/logo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import { adminToken, apiUrl } from "./http";
+import { userToken, apiUrl } from "./http";
 import { CartContext } from "../context/Cart";
 
 const Header = () => {
@@ -18,7 +18,7 @@ const Header = () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken()}`,
       },
     })
       .then((res) => res.json())
@@ -59,10 +59,10 @@ const Header = () => {
                 );
               })}
             </Nav>
-            <div className="nav-right d-flex gap-3 align-items-center">
-              <a href="#" className="text-dark">
-                <FontAwesomeIcon icon={faUser} size="lg" />
-              </a>
+            <div className="nav-right d-flex gap-3 align-items-center ">
+              <Link to="/account" className="text-dark link">
+                <FontAwesomeIcon className="font-awesome-icon" icon={faUser} size="lg" />
+              </Link>
               <Link to="/cart" className="text-dark cart-bucket">
                 <FontAwesomeIcon
                   icon={faShoppingCart}

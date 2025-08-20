@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Logo from "../../assets/images/logo.png";
@@ -6,11 +6,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { userToken, apiUrl } from "./http";
-import { CartContext } from "../context/Cart";
 
 const Header = () => {
   const [categories, setCategories] = useState([]);
-  const { getAllQtyInCart } = useContext(CartContext);
+
+  const getAllQtyInCart = () => {
+    let cart = localStorage.getItem("cart");
+    if (cart) {
+      cart = JSON.parse(cart);
+      return cart.length;
+    }
+    return 0;
+  };
 
   const fetchCategories = async () => {
     const res = await fetch(apiUrl + "/get-categories", {

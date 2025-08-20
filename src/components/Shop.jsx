@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Layout from "./common/Layout";
 import MenImg from "../assets/images/Mens/Mens/two.jpg";
 import { Link, useSearchParams } from "react-router-dom";
-import { adminToken, apiUrl } from "./common/http";
+import { adminToken, apiUrl, userToken } from "./common/http";
 
 const Shop = () => {
   const [categories, setCategories] = useState([]);
@@ -24,7 +24,7 @@ const Shop = () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken() || adminToken()}`,
       },
     })
       .then((res) => res.json())
@@ -43,7 +43,7 @@ const Shop = () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken() || adminToken()}`,
       },
     })
       .then((res) => res.json())
@@ -80,7 +80,7 @@ const Shop = () => {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${adminToken()}`,
+        Authorization: `Bearer ${userToken() || adminToken()}`,
       },
     })
       .then((res) => res.json())

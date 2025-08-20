@@ -23,6 +23,7 @@ import { default as PublicRegister } from "./components/Register";
 import { default as PublicLogin } from "./components/Login";
 import Profile from "./components/Profile";
 import { RequireAuth } from "./components/RequireAuth";
+import Confirmation from "./components/Confirmation";
 
 function App() {
   return (
@@ -33,10 +34,17 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<Product />} />
-          <Route path="/cart" element={<Cart />} />
           <Route path="/admin/login" element={<Login />} />
           <Route path="/account/register" element={<PublicRegister />} />
           <Route path="/account/login" element={<PublicLogin />} />
+          <Route
+            path="/cart"
+            element={
+              <RequireAuth>
+                <Cart />
+              </RequireAuth>
+            }
+          />
           <Route
             path="/account"
             element={
@@ -53,7 +61,14 @@ function App() {
               </RequireAuth>
             }
           />
-
+          <Route
+            path="/order/confirmed/:id"
+            element={
+              <RequireAuth>
+                <Confirmation />
+              </RequireAuth>
+            }
+          />
           <Route
             path="/admin/dashboard"
             element={
